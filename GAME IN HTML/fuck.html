@@ -1,0 +1,101 @@
+<!DOCTYPE.html>
+<html>
+<style>
+canvas {
+   background-color: #f2f2f2;
+   border: 1px solid black;
+}
+</style>
+
+<body onload="gameStart()">
+<button id="minushp" onclick="damaged()"> DEAL DAMAGE </button>
+<button id="minushp" onclick="healed()"> HEAL HEALTH  </button>
+</body>
+<script>
+var INGAME_land
+var INGAME_hpBar;
+var INGAME_hpFill;
+var INGAME_hpFill_width;
+var INGAME_text_HP;
+
+ INGAME_hpFill_width = 500;
+
+function gameStart() {
+
+   
+
+    gameArea.start();
+    INGAME_land = new objectComponent(1600,200,"#4d2600",0,650);
+    INGAME_hpBar = new objectComponent(500,40,"gray",170,60);
+    INGAME_hpFill = new objectComponent(INGAME_hpFill_width,40,"red",170,60);
+    INGAME_text_HP = new objectComponent("50px","Consolas","gray",60,95,"text");
+    INGAME_text_HP.text = "HP";
+    INGAME_text_HP.update();
+    INGAME_land.update();
+    INGAME_hpBar.update();
+    INGAME_hpFill.update();
+}
+
+function updateGame() {
+}
+
+function damaged() {
+    if (INGAME_hpFill_width > 0) {
+      INGAME_hpFill_width -= 25;
+    }
+    INGAME_hpFill.update();
+    gameStart();
+    
+}
+
+function healed() {
+   if (INGAME_hpFill_width < 500) {
+      INGAME_hpFill_width += 25;
+   }
+   INGAME_hpFill.update();
+   gameStart();
+}
+
+
+
+
+
+var gameArea = {
+    canvas: document.createElement('canvas'),
+    start: function() {
+        this.canvas.width = 1600;
+        this.canvas.height = 850;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    },
+    clear: function() {
+        this.context.clearrect(0,0,this.canvas.width, this.canvas.height);
+    }
+}
+
+function objectComponent(width,height,color,x,y,type) {
+     this.type = type;
+     this.width = width;
+     this.height = height;
+     this.x = x;
+     this.y = y;
+     this.update = function() {
+     ctx = gameArea.context;
+     if (this.type == "text") {
+         ctx.font = this.width + " " + this.height;
+         ctx.fillStyle = color;
+         ctx.fillText(this.text, this.x, this.y);
+      } else {
+           ctx.fillStyle = color;
+           ctx.fillRect(this.x, this.y, this.width, this.height);
+     }
+    }
+
+
+
+
+}
+
+
+</script>
+</html>
