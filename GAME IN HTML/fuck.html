@@ -1,4 +1,4 @@
-<!DOCTYPE.html>
+<<!DOCTYPE.html>
 <html>
 <style>
 canvas {
@@ -12,48 +12,60 @@ canvas {
 <button id="minushp" onclick="healed()"> HEAL HEALTH  </button>
 </body>
 <script>
+var screenWidth = screen.width;
+var screenHeight = screen.height;
+var damage = 25;
 var INGAME_land
 var INGAME_hpBar;
 var INGAME_hpFill;
 var INGAME_hpFill_width;
+var INGAME_hpFill_lossmeter;
 var INGAME_text_HP;
 
- INGAME_hpFill_width = 500;
+INGAME_hpFill_width = 500;
 
 function gameStart() {
 
    
 
     gameArea.start();
+    componentSetting();
+    updateGame();
+}
+
+function componentSetting() {
     INGAME_land = new objectComponent(1600,200,"#4d2600",0,650);
     INGAME_hpBar = new objectComponent(500,40,"gray",170,60);
     INGAME_hpFill = new objectComponent(INGAME_hpFill_width,40,"red",170,60);
     INGAME_text_HP = new objectComponent("50px","Consolas","gray",60,95,"text");
+    INGAME_hpFill_lossmeter = new objectComponent(damage,40,"white",INGAME_hpFill_width,INGAME_hpFill_width - damage);
     INGAME_text_HP.text = "HP";
+}
+
+function updateGame() {
     INGAME_text_HP.update();
     INGAME_land.update();
     INGAME_hpBar.update();
     INGAME_hpFill.update();
 }
 
-function updateGame() {
-}
-
 function damaged() {
     if (INGAME_hpFill_width > 0) {
-      INGAME_hpFill_width -= 25;
+      INGAME_hpFill_width -= damage;
     }
     INGAME_hpFill.update();
     gameStart();
+    updateGame();
     
 }
 
 function healed() {
    if (INGAME_hpFill_width < 500) {
-      INGAME_hpFill_width += 25;
+      INGAME_hpFill_width += damage;
    }
    INGAME_hpFill.update();
    gameStart();
+   updateGame();
 }
 
 
@@ -63,8 +75,8 @@ function healed() {
 var gameArea = {
     canvas: document.createElement('canvas'),
     start: function() {
-        this.canvas.width = 1600;
-        this.canvas.height = 850;
+        this.canvas.width = screenWidth - 320;
+        this.canvas.height = screenHeight - 230;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
@@ -92,8 +104,37 @@ function objectComponent(width,height,color,x,y,type) {
     }
 
 
+    this.gravity = 10;
+    this.gravitySpeed = 0;
+    this.jump = function() {
+        
+    }
 
 
+
+
+}
+
+/*
+   CONTROL KEYCODES:
+   UP: 38
+   LEFT: 37;
+   DOWN: 40;
+   RIGHT: 39;
+*/
+
+function gameControlling(event) {
+    var e = event;
+    switch(e.keyCode) {
+        case 37: //LEFT
+           break;
+        case 38: //UP
+           break;
+        case 39: //RIGHT
+           break;
+        case 40: //DOWN
+           break;
+    }
 }
 
 
