@@ -12,11 +12,15 @@ canvas {
 <button id="minushp" onclick="healed()"> HEAL HEALTH  </button>
 </body>
 <script>
+var maxFnt = screen.width / 100 * 4;
+var gameOver = false;
 var playerPosX = 700;
 var moveDistance = 3;
 var screenWidth = screen.width;
 var screenHeight = screen.height;
-var damage = 25;
+var gameWidth = screenWidth - (screenWidth / 100 * 30);
+var gameHeight = screenHeight - (screenHeight / 100 * 30);
+var damage = (gameWidth/100*35)/100*2;
 var INGAME_player;
 var INGAME_land
 var INGAME_hpBar;
@@ -24,28 +28,36 @@ var INGAME_hpFill;
 var INGAME_hpFill_width;
 var INGAME_hpFill_lossmeter;
 var INGAME_text_HP;
+var gameOverScreen;
+INGAME_hpFill_width = gameWidth/100*35;
 
-INGAME_hpFill_width = 500;
+function showGameOver() {
+    gameOverScreen = new objectComponent(gameWidth,gameHeight,"#4d2600",0,0);
+    gameStart();
+    gameOverScreen.update();
+    updateGame();
+    
+}
 
 function gameStart() {
-
    
-
     gameArea.start();
     componentSetting();
     updateGame();
 }
 
+
 function componentSetting() {
-    INGAME_land = new objectComponent(1600,200,"#4d2600",0,650);
-    INGAME_hpBar = new objectComponent(500,40,"gray",170,60);
-    INGAME_hpFill = new objectComponent(INGAME_hpFill_width,40,"red",170,60);
-    INGAME_player = new objectComponent(60,60,"rgb(0,150,0)",playerPosX,590);
-    INGAME_text_HP = new objectComponent("50px","Consolas","gray",60,95,"text");
+    
+    INGAME_land = new objectComponent(gameWidth,gameHeight/100*20,"#4d2600",0,gameHeight-gameHeight/100*20);
+    INGAME_hpBar = new objectComponent(gameWidth/100*35,gameHeight/100*5,"gray",170,60);
+    INGAME_hpFill = new objectComponent(INGAME_hpFill_width,gameHeight/100*5,"red",170,60);
+    INGAME_player = new objectComponent(60,60,"rgb(0,150,0)",playerPosX,INGAME_land.y - gameHeight/100*12);
+    INGAME_text_HP = new objectComponent((maxFnt/100*70).toString() + "px","Consolas","gray",(screen.width / 100 * 5),(screen.height / 100 * 12),"text");
     INGAME_hpFill_lossmeter = new objectComponent(damage,40,"white",INGAME_hpFill_width,INGAME_hpFill_width - damage);
     INGAME_text_HP.text = "HP";
+    
 }
-
 function updateGame() {
     INGAME_player.update();
     INGAME_text_HP.update();
@@ -54,34 +66,51 @@ function updateGame() {
     INGAME_hpFill.update();
 }
 
+function checkIfIsGameOver() {
+    
+}
+
 function damaged() {
+    
+    if (INGAME_hpFill_width == 0) {
+       gameOver = true;
+       gameOverScreen = new objectComponent(gameWidth,gameHeight,"#4d2600",0,0);
+       gameStart();
+       gameOverScreen.update();
+    } else {
     if (INGAME_hpFill_width > 0) {
+      if (INGAME_hpFill_width < damage) {
+          INGAME_hpFill_width -= INGAME_hpFill_width;
+      } else {
       INGAME_hpFill_width -= damage;
+      }
     }
-    INGAME_hpFill.update();
+  }
+
     gameStart();
     updateGame();
     
 }
 
+
+
+
+
 function healed() {
-   if (INGAME_hpFill_width < 500) {
-      INGAME_hpFill_width += damage;
+   if (!gameOver) {
+   if (INGAME_hpFill_width < gameWidth/100*35) {
+        INGAME_hpFill_width += damage;
+      
    }
-   INGAME_hpFill.update();
+   }
    gameStart();
    updateGame();
 }
-
-
-
-
-
 var gameArea = {
     canvas: document.createElement('canvas'),
     start: function() {
-        this.canvas.width = screenWidth - 320;
-        this.canvas.height = screenHeight - 230;
+        this.canvas.width = gameWidth;
+        this.canvas.height = gameHeight;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
@@ -89,8 +118,7 @@ var gameArea = {
         this.context.clearrect(0,0,this.canvas.width, this.canvas.height);
     }
 }
-
-function objectComponent(width,height,color,x,y,type) {
+function objectComponent(status,width,height,color,x,y,type) {
      this.type = type;
      this.width = width;
      this.height = height;
@@ -103,57 +131,84 @@ function objectComponent(width,height,color,x,y,type) {
          ctx.fillStyle = color;
          ctx.fillText(this.text, this.x, this.y);
       } else {
-           ctx.fillStyle = color;
+           if (status == "show") {
+             ctx.fillStyle = color;
+           } else {
+             ctx.fillStyle = "rgba(0,0,0,0)";
+           }
            ctx.fillRect(this.x, this.y, this.width, this.height);
      }
     }
-
-
     this.gravity = 10;
     this.gravitySpeed = 0;
     this.jump = function() {
         
     }
-
-
-
    
-
-
-
-
 }
 
+//CONTROL FUNCTIONS
+
+function player_goLeft() {
+
+  if (playerPosX > 0) {
+    if (playerPosX < moveDistance) {
+        playerPosX -= playerPosX;
+    } else {
+        playerPosX -= moveDistance;
+    }
+
+   }
+    gameStart();
+    updateGame();
+  
+}
+
+function player_goRight() {
+  if (gameWidth - playerPosX - INGAME_player.width > 0) {
+        playerPosX += moveDistance;
+   }
+    gameStart();
+    updateGame();
+  
+}
+
+function player_Jump() {
+}
+
+function player_Jump_and_goRight() {
+}
+
+function player_Jump_and_goLeft() {
+}
+//
 /*
    CONTROL KEYCODES:
    UP: 38
    LEFT: 37;
    DOWN: 40;
    RIGHT: 39;
+   SPACE: 32;
 */
-
 window.onkeydown = function(event) {
     var e = event;
     switch(e.keyCode) {
         case 37: //LEFT
-           playerPosX -= moveDistance;
-           gameStart();
-           updateGame();
+           if(!gameOver) {
+           player_goLeft();
+           }
            break;
         case 38: //UP
            break;
         case 39: //RIGHT
-           playerPosX += moveDistance;
-           gameStart();
-           updateGame();
+           if(!gameOver) {
+           player_goRight();
+           }
            break;
-        case 40: //DOWN
+        case 32: //SPACE
+           damaged();
            break;
     }
 }
-
-
-
-
 </script>
 </html>
