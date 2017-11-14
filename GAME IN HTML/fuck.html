@@ -7,9 +7,19 @@ canvas {
 }
 </style>
 
+
+<audio autoplay="true">
+   <source src="Fabric of Time.mp3" type="audio/mpeg">
+</audio>
+
 <body onload="gameStart()">
+
 <button id="minushp" onclick="damaged()"> DEAL DAMAGE </button>
 <button id="minushp" onclick="healed()"> HEAL HEALTH  </button>
+
+
+
+
 </body>
 <script>
 var maxFnt = screen.width / 100 * 4;
@@ -29,12 +39,12 @@ var INGAME_hpFill_width;
 var INGAME_hpFill_lossmeter;
 var INGAME_text_HP;
 var gameOverScreen;
+var gvosts = "hide";
 INGAME_hpFill_width = gameWidth/100*35;
 
 function showGameOver() {
-    gameOverScreen = new objectComponent(gameWidth,gameHeight,"#4d2600",0,0);
+    gvosts = "show";
     gameStart();
-    gameOverScreen.update();
     updateGame();
     
 }
@@ -48,17 +58,18 @@ function gameStart() {
 
 
 function componentSetting() {
-    
-    INGAME_land = new objectComponent(gameWidth,gameHeight/100*20,"#4d2600",0,gameHeight-gameHeight/100*20);
-    INGAME_hpBar = new objectComponent(gameWidth/100*35,gameHeight/100*5,"gray",170,60);
-    INGAME_hpFill = new objectComponent(INGAME_hpFill_width,gameHeight/100*5,"red",170,60);
-    INGAME_player = new objectComponent(60,60,"rgb(0,150,0)",playerPosX,INGAME_land.y - gameHeight/100*12);
-    INGAME_text_HP = new objectComponent((maxFnt/100*70).toString() + "px","Consolas","gray",(screen.width / 100 * 5),(screen.height / 100 * 12),"text");
-    INGAME_hpFill_lossmeter = new objectComponent(damage,40,"white",INGAME_hpFill_width,INGAME_hpFill_width - damage);
+    gameOverScreen = new objectComponent(gvosts,gameWidth,gameHeight,'rgba(255,255,255,0.5)',0,0);
+    INGAME_land = new objectComponent("show",gameWidth,gameHeight/100*20,"#4d2600",0,gameHeight-gameHeight/100*20);
+    INGAME_hpBar = new objectComponent("show",gameWidth/100*35,gameHeight/100*5,"gray",170,60);
+    INGAME_hpFill = new objectComponent("show",INGAME_hpFill_width,gameHeight/100*5,"red",170,60);
+    INGAME_player = new objectComponent("show",60,60,"rgb(0,150,0)",playerPosX,INGAME_land.y - gameHeight/100*12);
+    INGAME_text_HP = new objectComponent("show",(maxFnt/100*70).toString() + "px","Consolas","gray",(screen.width / 100 * 5),(screen.height / 100 * 12),"text");
+    INGAME_hpFill_lossmeter = new objectComponent("show",damage,40,"white",INGAME_hpFill_width,INGAME_hpFill_width - damage);
     INGAME_text_HP.text = "HP";
     
 }
 function updateGame() {
+    gameOverScreen.update();
     INGAME_player.update();
     INGAME_text_HP.update();
     INGAME_land.update();
@@ -74,9 +85,7 @@ function damaged() {
     
     if (INGAME_hpFill_width == 0) {
        gameOver = true;
-       gameOverScreen = new objectComponent(gameWidth,gameHeight,"#4d2600",0,0);
-       gameStart();
-       gameOverScreen.update();
+       showGameOver();
     } else {
     if (INGAME_hpFill_width > 0) {
       if (INGAME_hpFill_width < damage) {
@@ -85,6 +94,7 @@ function damaged() {
       INGAME_hpFill_width -= damage;
       }
     }
+    console.log(INGAME_hpFill_width);
   }
 
     gameStart();
@@ -119,6 +129,7 @@ var gameArea = {
     }
 }
 function objectComponent(status,width,height,color,x,y,type) {
+     this.status = status
      this.type = type;
      this.width = width;
      this.height = height;
@@ -131,10 +142,10 @@ function objectComponent(status,width,height,color,x,y,type) {
          ctx.fillStyle = color;
          ctx.fillText(this.text, this.x, this.y);
       } else {
-           if (status == "show") {
+           if (this.status == "show") {
              ctx.fillStyle = color;
            } else {
-             ctx.fillStyle = "rgba(0,0,0,0)";
+             ctx.fillStyle = 'rgba(0,0,0,0)';
            }
            ctx.fillRect(this.x, this.y, this.width, this.height);
      }
