@@ -8,7 +8,7 @@ canvas {
 </style>
 
 
-<audio autoplay="true">
+<audio id="gameMusic" autoplay="true">
    <source src="Fabric of Time.mp3" type="audio/mpeg">
 </audio>
 
@@ -31,6 +31,7 @@ var screenHeight = screen.height;
 var gameWidth = screenWidth - (screenWidth / 100 * 30);
 var gameHeight = screenHeight - (screenHeight / 100 * 30);
 var damage = (gameWidth/100*35)/100*2;
+var INGAME_music = document.getElementById("gameMusic");
 var INGAME_player;
 var INGAME_land
 var INGAME_hpBar;
@@ -41,22 +42,19 @@ var INGAME_text_HP;
 var gameOverScreen;
 var gvosts = "hide";
 INGAME_hpFill_width = gameWidth/100*35;
-
 function showGameOver() {
     gvosts = "show";
+    INGAME_music.pause();
     gameStart();
     updateGame();
     
 }
-
 function gameStart() {
    
     gameArea.start();
     componentSetting();
     updateGame();
 }
-
-
 function componentSetting() {
     gameOverScreen = new objectComponent(gvosts,gameWidth,gameHeight,'rgba(255,255,255,0.5)',0,0);
     INGAME_land = new objectComponent("show",gameWidth,gameHeight/100*20,"#4d2600",0,gameHeight-gameHeight/100*20);
@@ -76,11 +74,9 @@ function updateGame() {
     INGAME_hpBar.update();
     INGAME_hpFill.update();
 }
-
 function checkIfIsGameOver() {
     
 }
-
 function damaged() {
     
     if (INGAME_hpFill_width == 0) {
@@ -96,16 +92,10 @@ function damaged() {
     }
     console.log(INGAME_hpFill_width);
   }
-
     gameStart();
     updateGame();
     
 }
-
-
-
-
-
 function healed() {
    if (!gameOver) {
    if (INGAME_hpFill_width < gameWidth/100*35) {
@@ -157,24 +147,19 @@ function objectComponent(status,width,height,color,x,y,type) {
     }
    
 }
-
 //CONTROL FUNCTIONS
-
 function player_goLeft() {
-
   if (playerPosX > 0) {
     if (playerPosX < moveDistance) {
         playerPosX -= playerPosX;
     } else {
         playerPosX -= moveDistance;
     }
-
    }
     gameStart();
     updateGame();
   
 }
-
 function player_goRight() {
   if (gameWidth - playerPosX - INGAME_player.width > 0) {
         playerPosX += moveDistance;
@@ -183,13 +168,10 @@ function player_goRight() {
     updateGame();
   
 }
-
 function player_Jump() {
 }
-
 function player_Jump_and_goRight() {
 }
-
 function player_Jump_and_goLeft() {
 }
 //
